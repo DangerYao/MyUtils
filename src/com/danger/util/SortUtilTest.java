@@ -9,7 +9,8 @@ public class SortUtilTest {
 //		SortUtil.quickSort(t); //测试快速排序
 //		SortUtil.insertSort(t); //测试直接插入排序
 //		SortUtil.shellSort(t); //测试希尔排序
-		SortUtil.simpleSelectSort(t); //测试简单选择排序
+//		SortUtil.simpleSelectSort(t); //测试简单选择排序
+		SortUtil.heapSort(t); //测试堆排序
 		
 		
 		for (Integer i : t) {

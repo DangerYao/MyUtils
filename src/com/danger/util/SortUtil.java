@@ -1,5 +1,7 @@
 package com.danger.util;
 
+import com.sun.accessibility.internal.resources.accessibility;
+
 /**
  * 8大排序算法简单实现
  * 交换排序 -- 冒泡排序
@@ -148,5 +150,39 @@ public class SortUtil {
 			t[position] = temp;
 		}
 		
+	}
+	
+	public static <T extends Comparable<T>> void heapSort(T[] t){
+		
+		for(int i=t.length-1; i > 0; i--){
+			creatMaxHeap(t,i); //构建大顶堆
+			
+			//交换顶元素
+			T temp=t[0];
+			t[0] = t[i];
+			t[i] = temp;
+			
+		}
+	}
+
+	private static <T extends Comparable<T>> void creatMaxHeap(T[] t, int length) {
+		int max; 
+		for(int i=length/2; i>=0; i--){
+			if((2*i+1) <= (length-1)){
+				max = (t[2*i].compareTo(t[2*i+1]) > 0) ? (2*i) : (2*i+1);
+				if(t[max].compareTo(t[i]) > 0){
+					T temp = t[max];
+					t[max] = t[i];
+					t[i] = temp;
+				}
+			}
+			else if((2*i)<=(length-1)){
+				if(t[2*i].compareTo(t[i]) > 0){
+					T temp = t[2*i];
+					t[2*i] = t[i];
+					t[i] = temp;
+				}
+			}
+		}
 	}
 }
