@@ -1,6 +1,10 @@
 package com.danger.util;
 
+import java.lang.reflect.Array;
+
 import com.sun.accessibility.internal.resources.accessibility;
+
+import javafx.scene.control.Tab;
 
 /**
  * 8大排序算法简单实现
@@ -108,7 +112,7 @@ public class SortUtil {
 		int d = t.length; //增量 d
 		
 		while(d > 1){
-			d = d/2;
+			d = d >> 1;
 			
 			for(int i = 0; i < d ; i++){
 				for(int j = i+d; j < t.length; j+=d){
@@ -152,12 +156,18 @@ public class SortUtil {
 		
 	}
 	
+	
+	/**
+	 * 堆排序
+	 * @param t
+	 */
+	
 	public static <T extends Comparable<T>> void heapSort(T[] t){
 		
 		for(int i=t.length-1; i > 0; i--){
 			creatMaxHeap(t,i); //构建大顶堆
 			
-			//交换顶元素
+			//交换顶元素和无序堆得最后一个节点
 			T temp=t[0];
 			t[0] = t[i];
 			t[i] = temp;
@@ -167,22 +177,79 @@ public class SortUtil {
 
 	private static <T extends Comparable<T>> void creatMaxHeap(T[] t, int length) {
 		int max; 
-		for(int i=length/2; i>=0; i--){
-			if((2*i+1) <= (length-1)){
-				max = (t[2*i].compareTo(t[2*i+1]) > 0) ? (2*i) : (2*i+1);
+		/**
+		 * 从最后一个非叶节点开始遍历
+		 * 1、如果左右子树都存在，比较父节点，左右子节点三者大小，把最大的放在父节点处（如果父节点本身就最大，不做任何处理）；
+		 * 2、如果只存在左子树，则比较父节点和左节点，把大的放在父节点处（如果父节点本身就最大，不做任何处理）；
+		 */
+		for(int i= (length >> 1); i>=0; i--){
+			int left = i<<1;
+			int right = left + 1;
+			if(left <= (length-1)){
+				max = (t[left].compareTo(t[right]) > 0) ? left : right;
 				if(t[max].compareTo(t[i]) > 0){
 					T temp = t[max];
 					t[max] = t[i];
 					t[i] = temp;
 				}
 			}
-			else if((2*i)<=(length-1)){
-				if(t[2*i].compareTo(t[i]) > 0){
-					T temp = t[2*i];
-					t[2*i] = t[i];
+			else if(left<=(length-1)){
+				if(t[i<<1].compareTo(t[i]) > 0){
+					T temp = t[left];
+					t[left] = t[i];
 					t[i] = temp;
 				}
 			}
+		}
+	}
+	
+	
+	public static <T extends Comparable<T>> void mergeSort(T[] t){
+		subMergeSort(t,0,t.length-1);
+	}
+
+	private static <T extends Comparable<T>> void subMergeSort(T[] t, int left, int right) {
+		
+		int mid = (right+left) >> 1;
+		if(left < right){
+			subMergeSort(t, left, mid);    //左边
+			subMergeSort(t, mid+1, right); //右边
+			merge(t,left,mid,right);       //合并
+		}
+	}
+
+	/**
+	 * 合并两个数组
+	 * @param t
+	 * @param left
+	 * @param mid
+	 * @param right
+	 */
+	private static <T extends Comparable<T>> void merge(T[] t, int left, int mid, int right) {
+		@SuppressWarnings("unchecked")
+		T[] temp = (T[])Array.newInstance(t.getClass().getComponentType(),right-left+1); //利用反射创建泛型数组
+		
+		int pLefe = left;  //左边数组指针
+		int pRight = mid+1; //右边数组指正
+		int k = 0; //合并数组指针
+		
+		// 把较小的数先移到新数组中
+		while(pLefe<=mid && pRight<=right){
+			temp[k++] = (t[pLefe].compareTo(t[pRight]) < 0) ? t[pLefe++] : t[pRight++];
+		}
+		
+		// 把左边剩余的数移入数组
+		while(pLefe <= mid){
+			temp[k++] = t[pLefe++];
+		}
+		
+		// 把右边边剩余的数移入数组
+		while(pRight <= right){
+			temp[k++] = t[pRight++];
+		}
+		
+		for(int i=0; i<temp.length; i++){
+			t[i+left] = temp[i];
 		}
 	}
 }
